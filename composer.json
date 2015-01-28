@@ -1,0 +1,19 @@
+{
+    "name": "violetbrick/core",
+    "description": "Core Functions for VioletBrick Packages",
+    "keywords": ["laravel"],
+    "license": "CC BY 4.0",
+    "require": {
+        "laravel/framework": "~5.0"
+    },
+    "authors": [
+        {
+            "name": "SergeyCherepanov",
+            "email": "sergey@cherepanov.org.ua"
+        }
+    ],
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {"Core\\": "src/Core"}
+    }
+}
