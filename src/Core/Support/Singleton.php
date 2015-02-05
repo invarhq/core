@@ -15,9 +15,11 @@ trait Singleton
     }
 
     /**
+     * Retrieve instance (used by IoC)
+     * 
      * @return static
      */
-    static public function instance()
+    static public function __instance()
     {
         if (is_null(self::$instance)) {
             self::$instance = new static();

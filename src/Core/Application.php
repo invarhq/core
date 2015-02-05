@@ -13,17 +13,23 @@ class Application
     /**
      * @param ReflectionClass $reflector
      * @return bool
+     * @throws BindingResolutionException
      */
     protected function isInstantiable(ReflectionClass $reflector)
     {
-        if ($reflector->isInstantiable() || (
-                $reflector->getConstructor()->isProtected()
-                && $reflector->hasMethod('instance')
-                && ($dummyConstructor = $reflector->getMethod('instance'))
-                && $dummyConstructor->isStatic() && $dummyConstructor->isPublic()
-            )
-        ) {
+        if ($reflector->isInstantiable()) {
             return true;
+        } else if (
+                $reflector->getConstructor()->isProtected()
+        ) {
+            if ($reflector->hasMethod('__instance')
+                && ($dummyConstructor = $reflector->getMethod('__instance'))
+                && $dummyConstructor->isStatic() && $dummyConstructor->isPublic()
+            ) {
+                return true;
+            } else {
+                throw new BindingResolutionException(sprintf('Singleton "%s" must have static public method: "%s"', $reflector->name, '__instance'));
+            }
         }
         
         return false;
@@ -91,8 +97,8 @@ class Application
 
             array_pop($this->buildStack);
 
-            return $reflector->newInstanceArgs($instances);
-        } else if ($constructor->isProtected() && ($dummyConstructor = $reflector->getMethod('instance'))) {
+            $instance = $reflector->newInstanceArgs($instances);
+        } else if ($constructor->isProtected() && ($dummyConstructor = $reflector->getMethod('__instance'))) {
             $dependencies = $dummyConstructor->getParameters();
             $parameters = $this->keyParametersByArgument(
                 $dependencies, $parameters
@@ -102,11 +108,13 @@ class Application
                 $dependencies, $parameters
             );
 
-            return $dummyConstructor->invokeArgs(null, $instances);
+            $instance =$dummyConstructor->invokeArgs(null, $instances);
         } else {
             $message = "Target [$concrete] is not instantiable.";
 
             throw new BindingResolutionException($message);
         }
+        
+        return $instance;
     }
 }
