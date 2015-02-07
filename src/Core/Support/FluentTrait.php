@@ -9,7 +9,15 @@ trait FluentTrait
      *
      * @var array
      */
-    protected $attributes = array();
+    protected $attributes = [];
+
+    /**
+     * Clear attributes
+     */
+    public function clearAttributes()
+    {
+        $this->attributes = [];
+    }
 
     /**
      * @param array $attributes

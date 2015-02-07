@@ -20,7 +20,8 @@ class Application
         if ($reflector->isInstantiable()) {
             return true;
         } else if (
-                $reflector->getConstructor()->isProtected()
+            $reflector->getConstructor()
+            && $reflector->getConstructor()->isProtected()
         ) {
             if ($reflector->hasMethod('__instance')
                 && ($dummyConstructor = $reflector->getMethod('__instance'))
