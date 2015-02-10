@@ -109,12 +109,20 @@ class Application
                 $dependencies, $parameters
             );
 
-            $instance =$dummyConstructor->invokeArgs(null, $instances);
+            $instance = $dummyConstructor->invokeArgs(null, $instances);
         } else {
             $message = "Target [$concrete] is not instantiable.";
 
             throw new BindingResolutionException($message);
         }
+        
+        if ('local' == $this['env'] && $reflector->hasMethod('setDebugBar')) {
+            $method       = $reflector->getMethod('setDebugBar');
+            $dependencies = $method->getParameters();
+            $instances    = $this->getDependencies($dependencies);
+            $method->invokeArgs($instance, $instances);
+        }
+        
         
         return $instance;
     }

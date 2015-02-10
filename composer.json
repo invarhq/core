@@ -6,6 +6,9 @@
     "require": {
         "laravel/framework": "~5.0"
     },
+    "require-dev": {
+        "barryvdh/laravel-debugbar": "~2.0@dev"
+    },
     "authors": [
         {
             "name": "SergeyCherepanov",
